@@ -1,0 +1,167 @@
+/* ================================
+   GLOBAL RESET
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background: #f5f8ff;
+    color: #111;
+    line-height: 1.5;
+  }
+  
+  /* ================================
+     COLOR SYSTEM
+  ================================ */
+  :root {
+    --primary: #003366;
+    --secondary: #00509e;
+    --light: #f0f7ff;
+    --white: #ffffff;
+    --text: #111;
+    --muted: #6b7280;
+    --border: #dbeafe;
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* ================================
+     LAYOUT HELPERS
+  ================================ */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  /* ================================
+     BUTTONS
+  ================================ */
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+  }
+  
+  .btn-primary:hover {
+    background: #002040;
+    transform: translateY(-1px);
+  }
+  
+  .btn-secondary {
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  /* ================================
+     INPUTS
+  ================================ */
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    outline: none;
+    transition: 0.2s ease;
+    font-size: 14px;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(0, 80, 158, 0.15);
+  }
+  
+  /* ================================
+     CARDS
+  ================================ */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  
+  /* ================================
+     FLEX HELPERS
+  ================================ */
+  .flex {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* ================================
+     GRID SYSTEM (RESPONSIVE)
+  ================================ */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  
+  /* ================================
+     SIDEBAR RESPONSIVE SUPPORT
+  ================================ */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--primary);
+    color: white;
+  }
+  
+  .main {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  /* ================================
+     MOBILE RESPONSIVE
+  ================================ */
+  @media (max-width: 768px) {
+    .grid-2,
+    .grid-3 {
+      grid-template-columns: 1fr;
+    }
+  
+    .flex {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      min-height: auto;
+    }
+  
+    .container {
+      padding: 12px;
+    }
+  }
