@@ -1,67 +1,87 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import API from "../services/api";
 
 export default function Reservations() {
-  const [reservations, setReservations] = useState([
-    {
-      id: 1,
-      patient: "Tall Badru",
-      medicine: "Paracetamol 500mg",
-      quantity: 2,
-      pickupTime: "2026-05-28 10:00",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      patient: "Amina Ali",
-      medicine: "Amoxicillin 250mg",
-      quantity: 1,
-      pickupTime: "2026-05-28 12:00",
-      status: "Accepted",
-    },
-    {
-      id: 3,
-      patient: "Mohamed Said",
-      medicine: "Ibuprofen 400mg",
-      quantity: 3,
-      pickupTime: "2026-05-29 09:00",
-      status: "Rejected",
-    },
-    {
-      id: 4,
-      patient: "Fatma Hassan",
-      medicine: "Loratadine 10mg",
-      quantity: 1,
-      pickupTime: "2026-05-30 14:00",
-      status: "Pending",
-    },
-    {
-      id: 5,
-      patient: "Ali Juma",
-      medicine: "Metformin 500mg",
-      quantity: 2,
-      pickupTime: "2026-05-31 11:00",
-      status: "Completed",
-    },
-  ]);
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const updateStatus = (id, newStatus) => {
-    const updated = reservations.map((r) =>
-      r.id === id ? { ...r, status: newStatus } : r
-    );
-    setReservations(updated);
+  const fetchReservations = async () => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const res = await API.get("reservations/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setReservations(res.data || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  const approveReservation = async (id) => {
+    try {
+      const token = localStorage.getItem("access");
+
+      await API.post(
+        `reservations/${id}/approve/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchReservations();
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
+  const rejectReservation = async (id) => {
+    try {
+      const token = localStorage.getItem("access");
+
+      await API.post(
+        `reservations/${id}/reject/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchReservations();
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
   };
 
   const getStatusStyle = (status) => {
-    switch (status) {
-      case "Pending":
+    switch (status?.toLowerCase()) {
+      case "pending":
         return styles.pending;
-      case "Accepted":
+
+      case "approved":
         return styles.accepted;
-      case "Rejected":
+
+      case "rejected":
         return styles.rejected;
-      case "Completed":
+
+      case "completed":
         return styles.completed;
+
       default:
         return {};
     }
@@ -69,7 +89,6 @@ export default function Reservations() {
 
   return (
     <Layout>
-      {/* HEADER */}
       <div style={styles.header}>
         <div>
           <h2 style={styles.title}>Reservations Management</h2>
@@ -79,72 +98,81 @@ export default function Reservations() {
         </div>
       </div>
 
-      {/* TABLE */}
       <div style={styles.tableBox}>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Patient</th>
-              <th style={styles.th}>Medicine</th>
-              <th style={styles.th}>Qty</th>
-              <th style={styles.th}>Pickup Time</th>
-              <th style={styles.th}>Status</th>
-              <th style={styles.th}>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {reservations.map((r) => (
-              <tr key={r.id}>
-                <td style={styles.td}>{r.patient}</td>
-                <td style={styles.td}>{r.medicine}</td>
-                <td style={styles.td}>{r.quantity}</td>
-                <td style={styles.td}>{r.pickupTime}</td>
-
-                <td style={styles.td}>
-                  <span style={{ ...styles.status, ...getStatusStyle(r.status) }}>
-                    {r.status}
-                  </span>
-                </td>
-
-                <td style={styles.td}>
-                  {r.status === "Pending" && (
-                    <>
-                      <button
-                        style={styles.acceptBtn}
-                        onClick={() => updateStatus(r.id, "Accepted")}
-                      >
-                        Accept
-                      </button>
-
-                      <button
-                        style={styles.rejectBtn}
-                        onClick={() => updateStatus(r.id, "Rejected")}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-
-                  {r.status === "Accepted" && (
-                    <button
-                      style={styles.completeBtn}
-                      onClick={() => updateStatus(r.id, "Completed")}
-                    >
-                      Mark Completed
-                    </button>
-                  )}
-
-                  {(r.status === "Rejected" || r.status === "Completed") && (
-                    <span style={{ color: "#777", fontSize: "12px" }}>
-                      No actions
-                    </span>
-                  )}
-                </td>
+        {loading ? (
+          <p style={{ padding: 20 }}>Loading...</p>
+        ) : (
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Patient</th>
+                <th style={styles.th}>Medicine</th>
+                <th style={styles.th}>Qty</th>
+                <th style={styles.th}>Expiry Time</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {reservations.map((r) => (
+                <tr key={r.id}>
+                  <td style={styles.td}>{r.patient_name}</td>
+
+                  <td style={styles.td}>{r.medicine_name}</td>
+
+                  <td style={styles.td}>{r.quantity}</td>
+
+                  <td style={styles.td}>
+                    {new Date(r.expiry_time).toLocaleString()}
+                  </td>
+
+                  <td style={styles.td}>
+                    <span
+                      style={{
+                        ...styles.status,
+                        ...getStatusStyle(r.status),
+                      }}
+                    >
+                      {r.status}
+                    </span>
+                  </td>
+
+                  <td style={styles.td}>
+                    {r.status === "pending" && (
+                      <>
+                        <button
+                          style={styles.acceptBtn}
+                          onClick={() => approveReservation(r.id)}
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          style={styles.rejectBtn}
+                          onClick={() => rejectReservation(r.id)}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+
+                    {r.status !== "pending" && (
+                      <span
+                        style={{
+                          color: "#777",
+                          fontSize: "12px",
+                        }}
+                      >
+                        No actions
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </Layout>
   );
