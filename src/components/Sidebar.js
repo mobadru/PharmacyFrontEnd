@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
   return (
     <div style={styles.sidebar}>
-      <h2 style={styles.logo}>Drug System</h2>
+      <h2 style={styles.logo}>Medicine Reservation System</h2>
 
       <Link style={styles.link} to="/dashboard">Dashboard</Link>
-      <Link style={styles.link} to="/medicines">Medicines</Link>
+      <Link style={styles.link} to="/products">Products</Link>
       <Link style={styles.link} to="/stock">Stock</Link>
       <Link style={styles.link} to="/reports">Reports</Link>
       <Link style={styles.link} to="/reservation">Reservations</Link>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import API from "../services/api";
 
-export default function Medicines() {
+export default function Products() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const [stocks, setStocks] = useState([]);
@@ -48,7 +48,7 @@ export default function Medicines() {
     return stocks.find((s) => s.product === productId);
   };
 
-  // ================= OPEN STOCK MODAL =================
+  // ================= OPEN MODAL =================
   const openStockModal = (product) => {
     setSelectedProduct(product);
     setForm({
@@ -59,7 +59,7 @@ export default function Medicines() {
     setStockModal(true);
   };
 
-  // ================= ADD TO STOCK =================
+  // ================= ADD STOCK =================
   const addToStock = async () => {
     try {
       const token = localStorage.getItem("access");
@@ -93,30 +93,32 @@ export default function Medicines() {
     <Layout>
       {/* HEADER */}
       <div style={styles.header}>
-        <h2>Products List</h2>
+        <h2 style={styles.title}>Products List</h2>
       </div>
 
       {/* SEARCH */}
-      <input
-        placeholder="Search product..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={styles.search}
-      />
+      <div style={styles.searchBox}>
+        <input
+          placeholder="Search product..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={styles.input}
+        />
+      </div>
 
       {/* TABLE */}
-      <div style={styles.tableContainer}>
+      <div style={styles.tableBox}>
         {loading ? (
-          <p>Loading...</p>
+          <p style={{ padding: 20 }}>Loading...</p>
         ) : (
           <table style={styles.table}>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Brand</th>
-                <th>Category</th>
-                <th>Stock</th>
-                <th>Action</th>
+                <th style={styles.th}>Name</th>
+                <th style={styles.th}>Brand</th>
+                <th style={styles.th}>Category</th>
+                <th style={styles.th}>Stock</th>
+                <th style={styles.th}>Action</th>
               </tr>
             </thead>
 
@@ -126,12 +128,25 @@ export default function Medicines() {
 
                 return (
                   <tr key={p.id}>
-                    <td>{p.name}</td>
-                    <td>{p.brand}</td>
-                    <td>{p.category}</td>
-                    <td>{stock?.quantity ?? 0}</td>
+                    <td style={styles.td}>{p.name}</td>
+                    <td style={styles.td}>{p.brand}</td>
+                    <td style={styles.td}>{p.category}</td>
+                    <td style={styles.td}>
+                      <span
+                        style={{
+                          padding: "6px 10px",
+                          borderRadius: "20px",
+                          background:
+                            (stock?.quantity ?? 0) > 10 ? "#e6fff0" : "#ffe6e6",
+                          color:
+                            (stock?.quantity ?? 0) > 10 ? "#2b9348" : "#b30000",
+                        }}
+                      >
+                        {stock?.quantity ?? 0}
+                      </span>
+                    </td>
 
-                    <td>
+                    <td style={styles.td}>
                       <button
                         style={styles.addBtn}
                         onClick={() => openStockModal(p)}
@@ -147,7 +162,7 @@ export default function Medicines() {
         )}
       </div>
 
-      {/* ================= STOCK MODAL ================= */}
+      {/* ================= MODAL ================= */}
       {stockModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
@@ -158,8 +173,8 @@ export default function Medicines() {
             </p>
 
             <input
-              placeholder="Quantity"
               type="number"
+              placeholder="Quantity"
               value={form.quantity}
               onChange={(e) =>
                 setForm({ ...form, quantity: e.target.value })
@@ -185,13 +200,11 @@ export default function Medicines() {
               style={styles.input}
             />
 
-            <div style={styles.actions}>
-              <button onClick={addToStock} style={styles.save}>
+            <div style={styles.modalActions}>
+              <button onClick={addToStock} style={styles.saveBtn}>
                 Save
               </button>
-              <button onClick={() => setStockModal(false)}>
-                Cancel
-              </button>
+              <button onClick={() => setStockModal(false)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -202,31 +215,58 @@ export default function Medicines() {
 
 /* ================= STYLES ================= */
 const styles = {
-  header: { marginBottom: 15 },
-
-  search: {
-    padding: 10,
-    width: "100%",
-    marginBottom: 15,
+  header: {
+    marginBottom: 20,
   },
 
-  tableContainer: {
+  title: {
+    color: "#003366",
+  },
+
+  searchBox: {
     background: "white",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+
+  input: {
+    width: "100%",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
+    border: "1px solid #ccc",
+  },
+
+  tableBox: {
+    background: "white",
+    borderRadius: 12,
+    overflowX: "auto",
   },
 
   table: {
     width: "100%",
     borderCollapse: "collapse",
+    minWidth: 700,
+  },
+
+  th: {
+    background: "#003366",
+    color: "white",
+    padding: 12,
+    textAlign: "left",
+  },
+
+  td: {
+    padding: 12,
+    borderBottom: "1px solid #eee",
   },
 
   addBtn: {
-    background: "#0A66FF",
+    background: "#003366",
     color: "white",
-    padding: "6px 10px",
+    padding: "8px 12px",
     border: "none",
-    borderRadius: 6,
+    borderRadius: 8,
   },
 
   modalOverlay: {
@@ -241,26 +281,21 @@ const styles = {
   modal: {
     background: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     width: 350,
   },
 
-  input: {
-    width: "100%",
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-
-  actions: {
+  modalActions: {
     display: "flex",
     justifyContent: "space-between",
+    marginTop: 10,
   },
 
-  save: {
-    background: "green",
+  saveBtn: {
+    background: "#003366",
     color: "white",
     padding: "8px 12px",
     border: "none",
+    borderRadius: 8,
   },
 };

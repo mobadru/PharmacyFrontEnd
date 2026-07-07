@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Dashboard from "./pages/Dashboard";
-import Medicines from "./pages/Medicines";
+import Products from "./pages/Products";
 import Login from "./pages/Login";
 import Reports from "./pages/Reports";
 import Reservation from "./pages/Reservation";
@@ -30,10 +30,10 @@ function App() {
         />
 
         <Route
-          path="/medicines"
+          path="/products"
           element={
             <ProtectedRoute>
-              <Medicines />
+              <Products />
             </ProtectedRoute>
           }
         />
