@@ -1,8 +1,8 @@
 export default function Header() {
     return (
       <div style={styles.header}>
-        <h3>Drug Availability & Reserve System</h3>
-        <div>Tall Badru • Staff</div>
+        <h3>Medicine Reservation System</h3>
+        <div>Staff</div>
       </div>
     );
   }

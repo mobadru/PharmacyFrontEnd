@@ -193,7 +193,7 @@ Reservations Management
 
 
 <p style={styles.subtitle}>
-Manage patient medicine reservations
+Manage Customer medicine reservations
 </p>
 
 
